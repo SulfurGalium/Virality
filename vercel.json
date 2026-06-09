@@ -1,0 +1,39 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/reset-usage",
+      "schedule": "0 0 1 * *"
+    }
+  ],
+  "functions": {
+    "src/app/api/analyze/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/transcribe/route.ts": {
+      "maxDuration": 30
+    },
+    "src/app/api/webhook/route.ts": {
+      "maxDuration": 15
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-DNS-Prefetch-Control",
+          "value": "on"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

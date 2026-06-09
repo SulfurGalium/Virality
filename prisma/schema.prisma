@@ -1,0 +1,124 @@
+// Virality — Database Schema
+// Provider: PostgreSQL (Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── User (synced from Clerk) ───────────────────────────────────────────────
+
+model User {
+  id            String   @id                      // Clerk user ID
+  email         String   @unique
+  name          String?
+  imageUrl      String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Subscription state
+  plan          Plan     @default(FREE)
+  stripeCustomerId      String?  @unique
+  stripeSubscriptionId  String?  @unique
+  stripePriceId         String?
+  subscriptionStatus    String?  // active | canceled | past_due | trialing
+  subscriptionEndsAt    DateTime?
+  trialEndsAt           DateTime?
+
+  // Usage counters (reset monthly by cron)
+  analysesThisMonth     Int      @default(0)
+  analysesAllTime       Int      @default(0)
+  lastAnalysisAt        DateTime?
+  usageResetAt          DateTime @default(now())
+
+  analyses      Analysis[]
+  invoices      Invoice[]
+
+  @@index([stripeCustomerId])
+  @@index([plan])
+}
+
+enum Plan {
+  FREE
+  PRO
+  AGENCY
+}
+
+// ─── Analysis ──────────────────────────────────────────────────────────────
+
+model Analysis {
+  id            String   @id @default(cuid())
+  userId        String?                           // null = anonymous
+  createdAt     DateTime @default(now())
+
+  // Input metadata
+  videoName     String
+  videoSize     Int                              // bytes
+  videoDuration Float?                           // seconds
+  videoWidth    Int?
+  videoHeight   Int?
+  videoFps      Float?
+  hasAudio      Boolean  @default(false)
+  hasCaption    Boolean  @default(false)         // detected on-screen text
+  audioBpm      Float?
+  transcript    String?  @db.Text               // Whisper transcription
+
+  // AI output
+  score         Int
+  verdict       String
+  description   String   @db.Text
+  hookAnalysis  String   @db.Text
+  audioAnalysis String   @db.Text
+  tips          Json                             // String[]
+  caption       String   @db.Text
+  hashtags      Json                             // String[]
+  timing        Json                             // TimingSlot[]
+  rawResponse   Json?                            // full Claude response (debug)
+
+  // Sharing
+  shareToken    String?  @unique @default(cuid())
+  isPublic      Boolean  @default(false)
+
+  // Cost tracking
+  inputTokens   Int      @default(0)
+  outputTokens  Int      @default(0)
+  costUsdCents  Int      @default(0)
+
+  user          User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([shareToken])
+  @@index([createdAt])
+}
+
+// ─── Invoice (mirror of Stripe invoices for display) ───────────────────────
+
+model Invoice {
+  id             String   @id                   // Stripe invoice ID
+  userId         String
+  amountPaid     Int                            // cents
+  currency       String
+  status         String
+  pdfUrl         String?
+  periodStart    DateTime
+  periodEnd      DateTime
+  createdAt      DateTime @default(now())
+
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+// ─── Waitlist (for Agency plan interest) ───────────────────────────────────
+
+model Waitlist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  plan      String   @default("AGENCY")
+  createdAt DateTime @default(now())
+}
