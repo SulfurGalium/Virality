@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+    open-pull-requests-limit: 5
+    groups:
+      prisma:
+        patterns:
+          - "prisma"
+          - "@prisma/*"
+      clerk:
+        patterns:
+          - "@clerk/*"
+      anthropic:
+        patterns:
+          - "@anthropic-ai/*"
+      stripe:
+        patterns:
+          - "stripe"
+      upstash:
+        patterns:
+          - "@upstash/*"

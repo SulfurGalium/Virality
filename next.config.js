@@ -1,17 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Needed for ffmpeg.wasm cross-origin isolation
-  async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: [
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
-          { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
-        ],
-      },
-    ];
-  },
+  // NOTE: Cross-Origin-Embedder-Policy: require-corp was removed.
+  // It broke Clerk sign-in modals and Stripe checkout iframes because
+  // those cross-origin resources do not send CORP headers.
+  // If you later add ffmpeg.wasm processing, scope COEP only to the
+  // specific route that needs it (e.g. /api/process) via a separate
+  // headers() entry, never globally.
 
   // Allow Stripe and Clerk image domains
   images: {

@@ -24,7 +24,6 @@ import {
 
 const FrameSchema = z.object({
   timestamp: z.number().min(0).max(7200),
-  // Validated further by validateBase64Image()
   base64: z.string().min(100).max(533_334),
 });
 
@@ -48,7 +47,7 @@ const RequestSchema = z.object({
   targetAudience: z.string().max(200).optional(),
 });
 
-// ─── Route handler ───────────────────────────────────────────────────────────
+// ─── Route handler ────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
   let reservedUsageForUserId: string | null = null;
@@ -59,13 +58,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Content-Type must be application/json" }, { status: 415 });
     }
 
-    // 2. Body size limit (5MB max — frames are base64 so 5 × ~375KB = ~1.9MB)
+    // 2. Body size limit (5MB max)
     const rawBody = await readBodyWithLimit(req, 5 * 1024 * 1024);
     if (!rawBody) {
       return NextResponse.json({ error: "Request body too large (max 5MB)" }, { status: 413 });
     }
 
-    // 3. Parse and validate body before consuming plan usage
+    // 3. Parse and validate body
     let body: unknown;
     try {
       body = JSON.parse(rawBody);
@@ -100,21 +99,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 5. Auth — upsert user if not in DB yet (handles Clerk webhook delays)
+    // 5. Auth — look up user but never auto-create with missing data.
+    // If the Clerk webhook hasn't fired yet, the user row won't exist.
+    // Return 503 with Retry-After so the client retries cleanly rather
+    // than us creating a corrupted row with no email or name.
     const { userId } = await auth();
     let user = null;
     let planKey: "anon" | "free" | "pro" | "agency" = "anon";
 
     if (userId) {
       user = await db.user.findUnique({ where: { id: userId } });
+
       if (!user) {
-        // Webhook hasn't fired yet — create a minimal record so FK constraints are satisfied
-        user = await db.user.upsert({
-          where:  { id: userId },
-          create: { id: userId },
-          update: {},
-        });
+        // Clerk webhook hasn't synced yet — tell the client to retry.
+        // This is safer than creating a user row with no email or name,
+        // which causes billing and GDPR data-quality issues downstream.
+        return NextResponse.json(
+          { error: "Account setup is still syncing. Please try again in a moment." },
+          {
+            status: 503,
+            headers: { "Retry-After": "2" },
+          }
+        );
       }
+
       planKey = user.plan.toLowerCase() as "free" | "pro" | "agency";
     }
 
@@ -134,13 +142,11 @@ export async function POST(req: NextRequest) {
     }
 
     // 7. Atomic DB usage reservation.
-    // The slot is released in catch if AI analysis or persistence fails.
     if (user) {
       const limits = getPlanLimits(user.plan);
       const monthlyLimit = limits.analysesPerMonth;
 
       if (monthlyLimit !== -1) {
-        // Atomic: only increment if under the limit
         const updated = await db.$transaction(async (tx) => {
           const fresh = await tx.user.findUnique({
             where: { id: userId! },
@@ -164,7 +170,6 @@ export async function POST(req: NextRequest) {
         }
         reservedUsageForUserId = userId;
       } else {
-        // Unlimited plan — reserve the request for observability.
         await db.user.update({
           where: { id: userId! },
           data: {
@@ -178,7 +183,7 @@ export async function POST(req: NextRequest) {
 
     const planLimits = getPlanLimits(user?.plan ?? "FREE");
 
-    // 8. Sanitize all user-supplied strings before they go into AI prompt
+    // 8. Sanitize all user-supplied strings before they go into the AI prompt
     const signals: VideoSignals = {
       ...raw,
       fileSizeMb:     raw.fileSizeMb,
@@ -188,7 +193,6 @@ export async function POST(req: NextRequest) {
       targetAudience: raw.targetAudience ? sanitizeForPrompt(raw.targetAudience, 200): undefined,
       transcript:     raw.transcript     ? sanitizeForPrompt(raw.transcript, 4000)   : undefined,
 
-      // Strip plan-gated features
       frames: planLimits.frameExtraction && raw.frames
         ? raw.frames
             .filter((f) => validateBase64Image(f.base64))
@@ -197,7 +201,6 @@ export async function POST(req: NextRequest) {
       hasOnScreenText: planLimits.frameExtraction ? raw.hasOnScreenText : undefined,
     };
 
-    // Reject if no valid frames after validation (don't silently accept bad data)
     if (raw.frames?.length && !signals.frames?.length && planLimits.frameExtraction) {
       return NextResponse.json(
         { error: "Provided frames failed image validation." },
@@ -231,7 +234,7 @@ export async function POST(req: NextRequest) {
       })),
     };
 
-    // 11. Persist analysis and commit usage in one transaction.
+    // 11. Persist analysis and commit usage in one transaction
     const costCents = estimateCostCents(result.inputTokens, result.outputTokens);
     const analysis = await db.$transaction(async (tx) => {
       const created = await tx.analysis.create({
@@ -294,7 +297,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Never leak stack traces or internal error messages
     const isTimeout = err instanceof Error && err.message === "Analysis timeout";
     console.error("[/api/analyze]", isTimeout ? "Timeout" : err);
 

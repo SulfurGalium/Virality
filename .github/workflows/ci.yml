@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build and type check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
+        env:
+          # Stub env vars so Next.js can build without real secrets in CI.
+          # These are not real keys — they just satisfy the env validation
+          # that runs at build time. Real secrets live in Vercel.
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_stub
+          CLERK_SECRET_KEY: sk_test_stub
+          CLERK_WEBHOOK_SECRET: whsec_stub
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL: /sign-in
+          NEXT_PUBLIC_CLERK_SIGN_UP_URL: /sign-up
+          NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: /dashboard
+          NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: /dashboard
+          DATABASE_URL: postgresql://stub:stub@localhost:5432/stub
+          DIRECT_URL: postgresql://stub:stub@localhost:5432/stub
+          ANTHROPIC_API_KEY: sk-ant-stub
+          OPENAI_API_KEY: sk-stub
+          UPSTASH_REDIS_REST_URL: https://stub.upstash.io
+          UPSTASH_REDIS_REST_TOKEN: stub
+          STRIPE_SECRET_KEY: sk_test_stub
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_stub
+          STRIPE_WEBHOOK_SECRET: whsec_stub
+          STRIPE_PRO_MONTHLY_PRICE_ID: price_stub
+          STRIPE_PRO_YEARLY_PRICE_ID: price_stub
+          STRIPE_AGENCY_MONTHLY_PRICE_ID: price_stub
+          STRIPE_AGENCY_YEARLY_PRICE_ID: price_stub
+          CRON_SECRET: stub-cron-secret-for-ci-only

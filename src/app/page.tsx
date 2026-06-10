@@ -35,9 +35,15 @@ type ApiResponse = {
   result?: AnalysisResult;
 };
 
-const DRAFT_KEY = "hypr-marketing-upload-draft";
+// Fixed: was "hypr-marketing-upload-draft" — leaked internal project name
+// into every user's browser localStorage
+const DRAFT_KEY = "virality-upload-draft";
 const MAX_VIDEO_MB = 500;
 const ACCEPTED_TYPES = ["video/mp4", "video/quicktime", "video/webm", "video/x-msvideo", "video/x-matroska"];
+
+// How many times the client will auto-retry on a 503 (account sync in progress)
+const MAX_SYNC_RETRIES = 4;
+const SYNC_RETRY_DELAY_MS = 2000;
 
 function formatMb(sizeMb: number) {
   return `${sizeMb.toLocaleString(undefined, { maximumFractionDigits: 1 })} MB`;
@@ -75,6 +81,10 @@ function validateVideo(file: File): string | null {
   }
 
   return null;
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export default function HomePage() {
@@ -192,26 +202,47 @@ export default function HomePage() {
 
     setLoading(true);
     setError(null);
-    setNotice("Analysis can take up to a minute for busy services. Keep this tab open.");
+    // Fixed: clearer, more reassuring notice during the 60-second wait
+    setNotice("Analyzing your video — this takes 30–60 seconds. Keep this tab open.");
     setResult(null);
 
-    try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileType: file.type || "video/mp4",
-          fileSizeMb: file.size / 1024 / 1024,
-          niche: niche.trim(),
-          targetAudience: targetAudience.trim(),
-          transcript: "",
-          hasOnScreenText: false,
-        }),
-      });
+    const requestBody = JSON.stringify({
+      fileName: file.name,
+      fileType: file.type || "video/mp4",
+      fileSizeMb: file.size / 1024 / 1024,
+      niche: niche.trim(),
+      targetAudience: targetAudience.trim(),
+      transcript: "",
+      hasOnScreenText: false,
+    });
 
-      const body = await readApiResponse(res);
-      if (!res.ok || !body.result) {
+    try {
+      let res: Response | null = null;
+      let body: ApiResponse = {};
+
+      // Auto-retry on 503: the server returns this when the Clerk webhook
+      // hasn't synced the user record yet (common on first sign-up).
+      // Retry-After header says 2 seconds; we honour that.
+      for (let attempt = 0; attempt <= MAX_SYNC_RETRIES; attempt++) {
+        res = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: requestBody,
+        });
+
+        if (res.status !== 503) break;
+
+        // On last attempt don't sleep — just fall through to error handling
+        if (attempt < MAX_SYNC_RETRIES) {
+          setNotice(`Setting up your account — retrying in ${SYNC_RETRY_DELAY_MS / 1000}s…`);
+          await sleep(SYNC_RETRY_DELAY_MS);
+          setNotice("Analyzing your video — this takes 30–60 seconds. Keep this tab open.");
+        }
+      }
+
+      body = await readApiResponse(res!);
+
+      if (!res!.ok || !body.result) {
         throw new Error(body.error ?? "Analysis failed. Please try again.");
       }
 
@@ -240,7 +271,7 @@ export default function HomePage() {
     <main className="site-page" id="main-content">
       <a className="skip-link" href="#analysis-form">Skip to video analysis form</a>
       <header className="top-nav" aria-label="Primary navigation">
-        <Link href="/" className="brand" aria-label="hypr marketing home">
+        <Link href="/" className="brand" aria-label="Home">
           <span className="brand-mark" aria-hidden="true">h</span>
           hypr marketing
         </Link>
@@ -338,8 +369,14 @@ export default function HomePage() {
               </div>
 
               <div className="button-row">
-                <button className="button button-primary button-wide" onClick={analyze} disabled={!canSubmit} type="button">
-                  {loading ? "Analyzing..." : "Analyze video"}
+                <button
+                  className="button button-primary button-wide"
+                  onClick={analyze}
+                  disabled={!canSubmit}
+                  type="button"
+                  aria-busy={loading}
+                >
+                  {loading ? "Analyzing…" : "Analyze video"}
                 </button>
                 <button className="button button-ghost" onClick={resetUpload} disabled={loading} type="button">
                   Clear
@@ -415,7 +452,12 @@ export default function HomePage() {
                           <div key={`${slot.time}-${slot.label}`}>
                             <span>{slot.time}</span>
                             <strong>{slot.label}</strong>
-                            <meter min={0} max={100} value={slot.strength} />
+                            <meter
+                              min={0}
+                              max={100}
+                              value={slot.strength}
+                              aria-label={`${slot.label} strength ${slot.strength} out of 100`}
+                            />
                           </div>
                         ))}
                       </div>

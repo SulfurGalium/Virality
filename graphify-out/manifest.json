@@ -1,0 +1,352 @@
+{
+  "next-env.d.ts": {
+    "mtime": 1780527323.2380502,
+    "ast_hash": "29f60a376e12bf72b67d4994fcc84214",
+    "semantic_hash": ""
+  },
+  "next.config.js": {
+    "mtime": 1779978873.6626854,
+    "ast_hash": "69a2048667799e5c3c1cdbcf0b0ab193",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1780167269.1808052,
+    "ast_hash": "06ff864466a89e69f31bbc3c8460f3a3",
+    "semantic_hash": ""
+  },
+  "src/app/api/analyze/route.ts": {
+    "mtime": 1780528502.5363953,
+    "ast_hash": "cc53f5e69a06079f0a11661e83325046",
+    "semantic_hash": ""
+  },
+  "src/app/api/auth/webhook/route.ts": {
+    "mtime": 1779978872.8237634,
+    "ast_hash": "573e1d6199e6dd489b81cd9bf1087b34",
+    "semantic_hash": ""
+  },
+  "src/app/api/billing/route.ts": {
+    "mtime": 1779978872.912713,
+    "ast_hash": "0038eed3996a016cf2b6653b37d503cf",
+    "semantic_hash": ""
+  },
+  "src/app/api/cron/reset-usage/route.ts": {
+    "mtime": 1779978872.8718271,
+    "ast_hash": "c45e0f945bfe0257fd6458b4ded285d8",
+    "semantic_hash": ""
+  },
+  "src/app/api/transcribe/route.ts": {
+    "mtime": 1779978872.610683,
+    "ast_hash": "ea33a13171ae1e79025cee21bb16f940",
+    "semantic_hash": ""
+  },
+  "src/app/api/user/delete/route.ts": {
+    "mtime": 1780105106.0954576,
+    "ast_hash": "977421a357569ce307ce3beed84ab7c6",
+    "semantic_hash": ""
+  },
+  "src/app/api/user/export/route.ts": {
+    "mtime": 1779978872.7326822,
+    "ast_hash": "61160027e36fa13ab56ab5d04f232cbd",
+    "semantic_hash": ""
+  },
+  "src/app/api/user/route.ts": {
+    "mtime": 1780170671.730284,
+    "ast_hash": "22ec317d29874f56a4d1d10b8822a746",
+    "semantic_hash": ""
+  },
+  "src/app/api/webhook/route.ts": {
+    "mtime": 1779978872.6506834,
+    "ast_hash": "929ec6e5d21d7d3e517ca21e37a3c605",
+    "semantic_hash": ""
+  },
+  "src/app/dashboard/page.tsx": {
+    "mtime": 1780170682.0881543,
+    "ast_hash": "f59bc819ed562f17e97b4e3efea7bd9e",
+    "semantic_hash": ""
+  },
+  "src/app/layout.tsx": {
+    "mtime": 1780526711.4231427,
+    "ast_hash": "a5330210a9f482c594af7ace6b1bf13d",
+    "semantic_hash": ""
+  },
+  "src/app/legal/acceptable-use/page.tsx": {
+    "mtime": 1779978872.404682,
+    "ast_hash": "9ab2174f37be5504a1ad5a3b91e6f9ce",
+    "semantic_hash": ""
+  },
+  "src/app/legal/privacy/page.tsx": {
+    "mtime": 1779978872.5106833,
+    "ast_hash": "778453c2cf195aa8e21ac74a97bd2128",
+    "semantic_hash": ""
+  },
+  "src/app/legal/security/page.tsx": {
+    "mtime": 1779978872.5636885,
+    "ast_hash": "68988884a789561047d0ffb5e416ae04",
+    "semantic_hash": ""
+  },
+  "src/app/legal/terms/page.tsx": {
+    "mtime": 1780526753.9874003,
+    "ast_hash": "5270a9a81b9f04999a86d0e0958cc223",
+    "semantic_hash": ""
+  },
+  "src/app/page.tsx": {
+    "mtime": 1780525690.729193,
+    "ast_hash": "ea46073b26465130de91cf943c545ba7",
+    "semantic_hash": ""
+  },
+  "src/app/pricing/page.tsx": {
+    "mtime": 1780526744.5516915,
+    "ast_hash": "02bc26a24cee3abe319d1ffa0114f932",
+    "semantic_hash": ""
+  },
+  "src/lib/analyzer.ts": {
+    "mtime": 1780527495.554789,
+    "ast_hash": "24c96fceb4c8733491ae1615251a4549",
+    "semantic_hash": ""
+  },
+  "src/lib/db.ts": {
+    "mtime": 1779978873.259683,
+    "ast_hash": "0f499c0501e8d0beb0120f8c85245f82",
+    "semantic_hash": ""
+  },
+  "src/lib/plans.ts": {
+    "mtime": 1780526722.1651237,
+    "ast_hash": "ac70a6190a00bae26a149b1c6c00fb01",
+    "semantic_hash": ""
+  },
+  "src/lib/ratelimit.ts": {
+    "mtime": 1780528604.1089141,
+    "ast_hash": "a14233c6d5f31d7dfe9dafecb87be439",
+    "semantic_hash": ""
+  },
+  "src/lib/security.ts": {
+    "mtime": 1779978873.222687,
+    "ast_hash": "4034d0cbc36b0d7af3e2fd4f1f75e2bf",
+    "semantic_hash": ""
+  },
+  "src/lib/stripe.ts": {
+    "mtime": 1780105199.7199764,
+    "ast_hash": "e94cb90c3d42fa9884730943c2e48270",
+    "semantic_hash": ""
+  },
+  "src/lib/videoProcessor.ts": {
+    "mtime": 1779978873.1786842,
+    "ast_hash": "00b4e88d77b58e282a96dc2fed7667d1",
+    "semantic_hash": ""
+  },
+  "src/middleware.ts": {
+    "mtime": 1780169260.6381195,
+    "ast_hash": "3c408697098ea94a8bd2ef10e30edbba",
+    "semantic_hash": ""
+  },
+  "tsconfig.json": {
+    "mtime": 1780104879.120149,
+    "ast_hash": "4fbf3eeebddb17465b56b9c377645c25",
+    "semantic_hash": ""
+  },
+  "vercel.json": {
+    "mtime": 1779978873.5736835,
+    "ast_hash": "ff49af2a5c62419d94c5d493307820c6",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1780106560.4715917,
+    "ast_hash": "b0d63337bd5c392129f35de6ddaf9cf4",
+    "semantic_hash": ""
+  },
+  "SECURITY_AND_LEGAL_AUDIT.md": {
+    "mtime": 1779978873.3826847,
+    "ast_hash": "9404b516f29f70417df2720a2cc55137",
+    "semantic_hash": ""
+  },
+  "SECURITY_AUDIT.md": {
+    "mtime": 1779978873.7657166,
+    "ast_hash": "69148d409a4fe0fcc36d096420d641e0",
+    "semantic_hash": ""
+  },
+  "public/.well-known/security.txt": {
+    "mtime": 1779978873.478685,
+    "ast_hash": "7b9dbdf53464b9cb83f4c9133ab4b26a",
+    "semantic_hash": ""
+  },
+  "public/robots.txt": {
+    "mtime": 1779978873.428682,
+    "ast_hash": "e89a2d6be2044e809ce8b02afab117c7",
+    "semantic_hash": ""
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\next-env.d.ts": {
+    "mtime": 1780527323.2380502,
+    "ast_hash": "29f60a376e12bf72b67d4994fcc84214",
+    "semantic_hash": "29f60a376e12bf72b67d4994fcc84214"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\next.config.js": {
+    "mtime": 1779978873.6626854,
+    "ast_hash": "69a2048667799e5c3c1cdbcf0b0ab193",
+    "semantic_hash": "69a2048667799e5c3c1cdbcf0b0ab193"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\package.json": {
+    "mtime": 1780167269.1808052,
+    "ast_hash": "06ff864466a89e69f31bbc3c8460f3a3",
+    "semantic_hash": "06ff864466a89e69f31bbc3c8460f3a3"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\analyze\\route.ts": {
+    "mtime": 1780528502.5363953,
+    "ast_hash": "cc53f5e69a06079f0a11661e83325046",
+    "semantic_hash": "cc53f5e69a06079f0a11661e83325046"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\auth\\webhook\\route.ts": {
+    "mtime": 1779978872.8237634,
+    "ast_hash": "573e1d6199e6dd489b81cd9bf1087b34",
+    "semantic_hash": "573e1d6199e6dd489b81cd9bf1087b34"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\billing\\route.ts": {
+    "mtime": 1779978872.912713,
+    "ast_hash": "0038eed3996a016cf2b6653b37d503cf",
+    "semantic_hash": "0038eed3996a016cf2b6653b37d503cf"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\cron\\reset-usage\\route.ts": {
+    "mtime": 1779978872.8718271,
+    "ast_hash": "c45e0f945bfe0257fd6458b4ded285d8",
+    "semantic_hash": "c45e0f945bfe0257fd6458b4ded285d8"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\transcribe\\route.ts": {
+    "mtime": 1779978872.610683,
+    "ast_hash": "ea33a13171ae1e79025cee21bb16f940",
+    "semantic_hash": "ea33a13171ae1e79025cee21bb16f940"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\user\\delete\\route.ts": {
+    "mtime": 1780105106.0954576,
+    "ast_hash": "977421a357569ce307ce3beed84ab7c6",
+    "semantic_hash": "977421a357569ce307ce3beed84ab7c6"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\user\\export\\route.ts": {
+    "mtime": 1779978872.7326822,
+    "ast_hash": "61160027e36fa13ab56ab5d04f232cbd",
+    "semantic_hash": "61160027e36fa13ab56ab5d04f232cbd"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\user\\route.ts": {
+    "mtime": 1780170671.730284,
+    "ast_hash": "22ec317d29874f56a4d1d10b8822a746",
+    "semantic_hash": "22ec317d29874f56a4d1d10b8822a746"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\api\\webhook\\route.ts": {
+    "mtime": 1779978872.6506834,
+    "ast_hash": "929ec6e5d21d7d3e517ca21e37a3c605",
+    "semantic_hash": "929ec6e5d21d7d3e517ca21e37a3c605"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\dashboard\\page.tsx": {
+    "mtime": 1780170682.0881543,
+    "ast_hash": "f59bc819ed562f17e97b4e3efea7bd9e",
+    "semantic_hash": "f59bc819ed562f17e97b4e3efea7bd9e"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\layout.tsx": {
+    "mtime": 1780526711.4231427,
+    "ast_hash": "a5330210a9f482c594af7ace6b1bf13d",
+    "semantic_hash": "a5330210a9f482c594af7ace6b1bf13d"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\legal\\acceptable-use\\page.tsx": {
+    "mtime": 1779978872.404682,
+    "ast_hash": "9ab2174f37be5504a1ad5a3b91e6f9ce",
+    "semantic_hash": "9ab2174f37be5504a1ad5a3b91e6f9ce"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\legal\\privacy\\page.tsx": {
+    "mtime": 1779978872.5106833,
+    "ast_hash": "778453c2cf195aa8e21ac74a97bd2128",
+    "semantic_hash": "778453c2cf195aa8e21ac74a97bd2128"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\legal\\security\\page.tsx": {
+    "mtime": 1779978872.5636885,
+    "ast_hash": "68988884a789561047d0ffb5e416ae04",
+    "semantic_hash": "68988884a789561047d0ffb5e416ae04"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\legal\\terms\\page.tsx": {
+    "mtime": 1780526753.9874003,
+    "ast_hash": "5270a9a81b9f04999a86d0e0958cc223",
+    "semantic_hash": "5270a9a81b9f04999a86d0e0958cc223"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\page.tsx": {
+    "mtime": 1780525690.729193,
+    "ast_hash": "ea46073b26465130de91cf943c545ba7",
+    "semantic_hash": "ea46073b26465130de91cf943c545ba7"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\app\\pricing\\page.tsx": {
+    "mtime": 1780526744.5516915,
+    "ast_hash": "02bc26a24cee3abe319d1ffa0114f932",
+    "semantic_hash": "02bc26a24cee3abe319d1ffa0114f932"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\lib\\analyzer.ts": {
+    "mtime": 1780527495.554789,
+    "ast_hash": "24c96fceb4c8733491ae1615251a4549",
+    "semantic_hash": "24c96fceb4c8733491ae1615251a4549"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\lib\\db.ts": {
+    "mtime": 1779978873.259683,
+    "ast_hash": "0f499c0501e8d0beb0120f8c85245f82",
+    "semantic_hash": "0f499c0501e8d0beb0120f8c85245f82"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\lib\\plans.ts": {
+    "mtime": 1780526722.1651237,
+    "ast_hash": "ac70a6190a00bae26a149b1c6c00fb01",
+    "semantic_hash": "ac70a6190a00bae26a149b1c6c00fb01"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\lib\\ratelimit.ts": {
+    "mtime": 1780528604.1089141,
+    "ast_hash": "a14233c6d5f31d7dfe9dafecb87be439",
+    "semantic_hash": "a14233c6d5f31d7dfe9dafecb87be439"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\lib\\security.ts": {
+    "mtime": 1779978873.222687,
+    "ast_hash": "4034d0cbc36b0d7af3e2fd4f1f75e2bf",
+    "semantic_hash": "4034d0cbc36b0d7af3e2fd4f1f75e2bf"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\lib\\stripe.ts": {
+    "mtime": 1780105199.7199764,
+    "ast_hash": "e94cb90c3d42fa9884730943c2e48270",
+    "semantic_hash": "e94cb90c3d42fa9884730943c2e48270"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\lib\\videoProcessor.ts": {
+    "mtime": 1779978873.1786842,
+    "ast_hash": "00b4e88d77b58e282a96dc2fed7667d1",
+    "semantic_hash": "00b4e88d77b58e282a96dc2fed7667d1"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\src\\middleware.ts": {
+    "mtime": 1780169260.6381195,
+    "ast_hash": "3c408697098ea94a8bd2ef10e30edbba",
+    "semantic_hash": "3c408697098ea94a8bd2ef10e30edbba"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\tsconfig.json": {
+    "mtime": 1780104879.120149,
+    "ast_hash": "4fbf3eeebddb17465b56b9c377645c25",
+    "semantic_hash": "4fbf3eeebddb17465b56b9c377645c25"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\vercel.json": {
+    "mtime": 1779978873.5736835,
+    "ast_hash": "ff49af2a5c62419d94c5d493307820c6",
+    "semantic_hash": "ff49af2a5c62419d94c5d493307820c6"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\README.md": {
+    "mtime": 1780106560.4715917,
+    "ast_hash": "b0d63337bd5c392129f35de6ddaf9cf4",
+    "semantic_hash": "b0d63337bd5c392129f35de6ddaf9cf4"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\SECURITY_AND_LEGAL_AUDIT.md": {
+    "mtime": 1779978873.3826847,
+    "ast_hash": "9404b516f29f70417df2720a2cc55137",
+    "semantic_hash": "9404b516f29f70417df2720a2cc55137"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\SECURITY_AUDIT.md": {
+    "mtime": 1779978873.7657166,
+    "ast_hash": "69148d409a4fe0fcc36d096420d641e0",
+    "semantic_hash": "69148d409a4fe0fcc36d096420d641e0"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\public\\.well-known\\security.txt": {
+    "mtime": 1779978873.478685,
+    "ast_hash": "7b9dbdf53464b9cb83f4c9133ab4b26a",
+    "semantic_hash": "7b9dbdf53464b9cb83f4c9133ab4b26a"
+  },
+  "C:\\Users\\gangu\\Downloads\\virality\\public\\robots.txt": {
+    "mtime": 1779978873.428682,
+    "ast_hash": "e89a2d6be2044e809ce8b02afab117c7",
+    "semantic_hash": "e89a2d6be2044e809ce8b02afab117c7"
+  }
+}

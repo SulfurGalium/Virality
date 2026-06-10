@@ -1,0 +1,60 @@
+- When adding a new user the page says that the page has not been created yet
+
+- Make the language less human
+
+- people should be able to see the ada compliance, data collection policy, and tos
+
+- Should be more specific prompt
+
+- Uploading a file:
+
+prisma:error
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].user.upsert()` invocation in
+C:\Users\gangu\Downloads\virality\.next\dev\server\chunks\[root-of-the-server]__102d~uo._.js:718:156
+
+  715 });
+  716 if (!user) {
+  717     // Webhook hasn't fired yet — create a minimal record so FK constraints are satisfied
+→ 718     user = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].user.upsert({
+            where: {
+              id: "user_3EShtHBKMfRV61Q0puE9i47stuf"
+            },
+            create: {
+              id: "user_3EShtHBKMfRV61Q0puE9i47stuf",
+          +   email: String
+            },
+            update: {}
+          })
+
+Argument `email` is missing.
+[/api/analyze] Error [PrismaClientValidationError]:
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].user.upsert()` invocation in
+C:\Users\gangu\Downloads\virality\.next\dev\server\chunks\[root-of-the-server]__102d~uo._.js:718:156
+
+  715 });
+  716 if (!user) {
+  717     // Webhook hasn't fired yet — create a minimal record so FK constraints are satisfied
+→ 718     user = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["db"].user.upsert({
+            where: {
+              id: "user_3EShtHBKMfRV61Q0puE9i47stuf"
+            },
+            create: {
+              id: "user_3EShtHBKMfRV61Q0puE9i47stuf",
+          +   email: String
+            },
+            update: {}
+          })
+
+Argument `email` is missing.
+    at <unknown> (src\app\api\analyze\route.ts:112:30)
+    at async POST (src\app\api\analyze\route.ts:112:16)
+  110 |       if (!user) {
+  111 |         // Webhook hasn't fired yet — create a minimal record so FK constraints are satisfied
+> 112 |         user = await db.user.upsert({
+      |                              ^
+  113 |           where:  { id: userId },
+  114 |           create: { id: userId },
+  115 |           update: {}, {
+  clientVersion: '5.22.0'
+}
+ POST /api/analyze 500 in 797ms (next.js: 5ms, proxy.ts: 13ms, application-code: 778ms)
