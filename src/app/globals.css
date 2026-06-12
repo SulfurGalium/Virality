@@ -568,3 +568,19 @@ a {
     animation-iteration-count: 1 !important;
   }
 }
+/* ── Site footer ────────────────────────────────────────────────────────────
+   Appended to globals.css — do not replace the whole file, just add this
+   to the bottom.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  /* Stack footer columns on mobile */
+  footer[aria-label="Site footer"] > div {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  footer[aria-label="Site footer"] p {
+    text-align: left !important;
+  }
+}

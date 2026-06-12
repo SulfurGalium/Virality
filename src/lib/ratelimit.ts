@@ -18,7 +18,7 @@ export const anonLimiter = new Ratelimit({
 // Free plan users: 4 per month (enforced in DB, Redis as fast-path cache)
 export const freeLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(5, "30 d"),
+  limiter: Ratelimit.slidingWindow(8, "30 d"),
   prefix: "virality:free",
   analytics: true,
 });

@@ -1,5 +1,6 @@
 // src/app/api/user/route.ts
 // GET /api/user — returns current user's plan, usage, and analysis history
+// Trials removed: trialEndsAt and isOnTrial no longer exist
 
 import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -13,32 +14,35 @@ export async function GET(req: NextRequest) {
   }
 
   const { searchParams } = new URL(req.url);
-  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
+  const page  = Math.max(1,  parseInt(searchParams.get("page")  ?? "1"));
   const limit = Math.min(50, parseInt(searchParams.get("limit") ?? "20"));
-  const skip = (page - 1) * limit;
+  const skip  = (page - 1) * limit;
+
+  // Shared select — no trialEndsAt
+  const userSelect = {
+    id: true,
+    email: true,
+    name: true,
+    imageUrl: true,
+    plan: true,
+    subscriptionStatus: true,
+    subscriptionEndsAt: true,
+    analysesThisMonth: true,
+    analysesAllTime: true,
+    usageResetAt: true,
+    createdAt: true,
+  } as const;
 
   let user = await db.user.findUnique({
     where: { id: userId },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      imageUrl: true,
-      plan: true,
-      subscriptionStatus: true,
-      subscriptionEndsAt: true,
-      trialEndsAt: true,
-      analysesThisMonth: true,
-      analysesAllTime: true,
-      usageResetAt: true,
-      createdAt: true,
-    },
+    select: userSelect,
   });
 
   if (!user) {
+    // User row doesn't exist yet — create it from Clerk data.
+    // This handles the case where the Clerk webhook hasn't fired yet.
     const clerkUser = await currentUser();
     const email = clerkUser?.primaryEmailAddress?.emailAddress;
-
     if (!email) {
       return NextResponse.json({ error: "User email not found" }, { status: 404 });
     }
@@ -47,29 +51,16 @@ export async function GET(req: NextRequest) {
       data: {
         id: userId,
         email,
-        name: clerkUser?.fullName ?? clerkUser?.username ?? null,
+        name:     clerkUser?.fullName ?? clerkUser?.username ?? null,
         imageUrl: clerkUser?.imageUrl ?? null,
       },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        imageUrl: true,
-        plan: true,
-        subscriptionStatus: true,
-        subscriptionEndsAt: true,
-        trialEndsAt: true,
-        analysesThisMonth: true,
-        analysesAllTime: true,
-        usageResetAt: true,
-        createdAt: true,
-      },
+      select: userSelect,
     });
   }
 
   const [analyses, totalAnalyses] = await Promise.all([
     db.analysis.findMany({
-      where: { userId },
+      where:   { userId },
       orderBy: { createdAt: "desc" },
       skip,
       take: limit,
@@ -91,23 +82,22 @@ export async function GET(req: NextRequest) {
     db.analysis.count({ where: { userId } }),
   ]);
 
-  const planConfig = PLANS[user.plan];
+  const planConfig  = PLANS[user.plan];
   const monthlyLimit = planConfig.limits.analysesPerMonth;
 
   return NextResponse.json({
     user: {
       ...user,
-      plan: user.plan,
       planName: planConfig.name,
-      limits: planConfig.limits,
+      limits:   planConfig.limits,
+      // isOnTrial removed — trials no longer offered
       usage: {
         thisMonth: user.analysesThisMonth,
-        allTime: user.analysesAllTime,
-        limit: monthlyLimit,
-        remaining:
-          monthlyLimit === -1
-            ? -1
-            : Math.max(0, monthlyLimit - user.analysesThisMonth),
+        allTime:   user.analysesAllTime,
+        limit:     monthlyLimit,
+        remaining: monthlyLimit === -1
+          ? -1
+          : Math.max(0, monthlyLimit - user.analysesThisMonth),
         resetAt: user.usageResetAt,
       },
     },

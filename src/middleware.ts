@@ -88,6 +88,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     // Frames: Stripe checkout (in iframe)
     "frame-src https://js.stripe.com https://hooks.stripe.com https://challenges.cloudflare.com",
     // Workers: for ffmpeg.wasm
+    "media-src 'self' blob:",
     "worker-src 'self' blob:",
     // Prevents XSS via data: URIs
     "object-src 'none'",

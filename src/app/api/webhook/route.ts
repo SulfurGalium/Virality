@@ -1,6 +1,5 @@
 // src/app/api/webhook/route.ts
-// POST /api/webhook/stripe
-// Handles all Stripe subscription lifecycle events
+// Handles Stripe subscription lifecycle events — trial logic removed
 
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -28,11 +27,10 @@ export async function POST(req: NextRequest) {
   try {
     switch (event.type) {
 
-      // ── Subscription created (includes trials) ──────────────────────────
+      // ── Subscription created or updated ─────────────────────────────────
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const sub = event.data.object as Stripe.Subscription;
-        const customerId = sub.customer as string;
         const priceId = sub.items.data[0]?.price.id;
         if (!priceId) break;
 
@@ -50,16 +48,14 @@ export async function POST(req: NextRequest) {
             stripeSubscriptionId: sub.id,
             stripePriceId: priceId,
             subscriptionStatus: sub.status,
+            // subscriptionEndsAt only set if user has explicitly scheduled cancellation
             subscriptionEndsAt: sub.cancel_at
               ? new Date(sub.cancel_at * 1000)
-              : null,
-            trialEndsAt: sub.trial_end
-              ? new Date(sub.trial_end * 1000)
               : null,
           },
         });
 
-        // Reset monthly usage when upgrading
+        // Reset monthly usage on plan change
         if (plan !== "FREE") {
           await db.user.update({
             where: { id: userId },
@@ -71,7 +67,7 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      // ── Subscription deleted (cancel at period end fires this) ──────────
+      // ── Subscription deleted ─────────────────────────────────────────────
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
         const userId = sub.metadata?.userId;
@@ -85,8 +81,6 @@ export async function POST(req: NextRequest) {
             stripePriceId: null,
             subscriptionStatus: "canceled",
             subscriptionEndsAt: null,
-            trialEndsAt: null,
-            // Reset to free limits
             analysesThisMonth: 0,
           },
         });
@@ -95,23 +89,14 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      // ── Trial ending soon (3 days before) ───────────────────────────────
-      case "customer.subscription.trial_will_end": {
-        const sub = event.data.object as Stripe.Subscription;
-        const userId = sub.metadata?.userId;
-        if (!userId) break;
-        // TODO: send "trial ending soon" email via Resend/Loops
-        console.log(`[webhook] Trial ending soon for user ${userId}`);
-        break;
-      }
-
-      // ── Payment succeeded — mirror invoice ───────────────────────────────
+      // ── Payment succeeded — reset usage and mirror invoice ───────────────
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
         const customerId = invoice.customer as string;
 
         const user = await db.user.findUnique({
           where: { stripeCustomerId: customerId },
+          select: { id: true },
         });
         if (!user) break;
 
@@ -121,7 +106,7 @@ export async function POST(req: NextRequest) {
           data: { analysesThisMonth: 0, usageResetAt: new Date() },
         });
 
-        // Mirror invoice
+        // Mirror invoice for billing history display
         if (invoice.id && invoice.amount_paid > 0) {
           await db.invoice.upsert({
             where: { id: invoice.id },
@@ -150,6 +135,7 @@ export async function POST(req: NextRequest) {
 
         const user = await db.user.findUnique({
           where: { stripeCustomerId: customerId },
+          select: { id: true },
         });
         if (!user) break;
 
@@ -158,18 +144,17 @@ export async function POST(req: NextRequest) {
           data: { subscriptionStatus: "past_due" },
         });
 
-        // TODO: send payment failure email
+        // TODO: send payment failure email via Resend/Loops
         console.log(`[webhook] Payment failed for user ${user.id}`);
         break;
       }
 
       default:
-        // Unhandled event — log and ignore
         console.log(`[webhook] Unhandled event: ${event.type}`);
     }
   } catch (err) {
     console.error(`[webhook] Handler error for ${event.type}:`, err);
-    // Return 200 so Stripe doesn't retry — we log the error
+    // Return 200 so Stripe does not retry — error is logged above
     return NextResponse.json({ received: true, error: "Handler failed" });
   }
 

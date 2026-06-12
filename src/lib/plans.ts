@@ -1,5 +1,6 @@
 // src/lib/plans.ts
-// Single source of truth for plan limits and pricing
+// Single source of truth for plan limits and pricing.
+// Trials removed — no trial_period_days anywhere.
 
 export const PLANS = {
   FREE: {
@@ -8,9 +9,9 @@ export const PLANS = {
     price: { monthly: 0, yearly: 0 },
     limits: {
       analysesPerMonth: 4,
-      frameExtraction: false,     // filename-only analysis
-      transcription: false,       // no Whisper
-      webSearch: false,           // no real-time trending
+      frameExtraction: true,
+      transcription: true,
+      webSearch: false,
       pdfExport: false,
       historyDays: 7,
       shareReports: false,
@@ -25,7 +26,7 @@ export const PLANS = {
     tagline: "For serious creators",
     price: {
       monthly: 900,   // cents → $9/mo
-      yearly: 7900,   // cents → $79/yr (save $29)
+      yearly:  7900,  // cents → $79/yr
     },
     stripePriceIds: {
       monthly: process.env.STRIPE_PRO_MONTHLY_PRICE_ID!,
@@ -50,19 +51,19 @@ export const PLANS = {
     tagline: "For teams & brands",
     price: {
       monthly: 4900,  // cents → $49/mo
-      yearly: 39900,  // cents → $399/yr (save $189)
+      yearly:  39900, // cents → $399/yr
     },
     stripePriceIds: {
       monthly: process.env.STRIPE_AGENCY_MONTHLY_PRICE_ID!,
       yearly:  process.env.STRIPE_AGENCY_YEARLY_PRICE_ID!,
     },
     limits: {
-      analysesPerMonth: -1,       // unlimited (-1 = no cap)
+      analysesPerMonth: -1,  // unlimited
       frameExtraction: true,
       transcription: true,
       webSearch: true,
       pdfExport: true,
-      historyDays: -1,            // unlimited
+      historyDays: -1,       // unlimited
       shareReports: true,
       apiAccess: true,
       supportLevel: "priority",

@@ -9,7 +9,6 @@ import { db } from "@/lib/db";
 import {
   createCheckoutSession,
   createPortalSession,
-  getOrCreateStripeCustomer,
 } from "@/lib/stripe";
 import { PLANS, PlanKey } from "@/lib/plans";
 
@@ -39,7 +38,6 @@ export async function GET() {
       plan: true,
       subscriptionStatus: true,
       subscriptionEndsAt: true,
-      trialEndsAt: true,
       analysesThisMonth: true,
       analysesAllTime: true,
       usageResetAt: true,
@@ -72,8 +70,7 @@ export async function GET() {
     planName: planConfig.name,
     subscriptionStatus: user.subscriptionStatus,
     subscriptionEndsAt: user.subscriptionEndsAt,
-    trialEndsAt: user.trialEndsAt,
-    isOnTrial: user.trialEndsAt ? new Date() < user.trialEndsAt : false,
+    // isOnTrial removed — trials no longer offered
     usage: {
       thisMonth: user.analysesThisMonth,
       allTime: user.analysesAllTime,
@@ -106,10 +103,9 @@ export async function POST(req: NextRequest) {
 
   const email = clerkUser.emailAddresses[0]?.emailAddress ?? "";
   const name = `${clerkUser.firstName ?? ""} ${clerkUser.lastName ?? ""}`.trim();
-
   const appUrl = process.env.NEXT_PUBLIC_APP_URL!;
 
-  // Checkout
+  // Checkout — no trial period
   if (parsed.data.action === "checkout") {
     const { plan, interval } = parsed.data;
     const planConfig = PLANS[plan];
@@ -136,7 +132,10 @@ export async function POST(req: NextRequest) {
 
   // Portal
   if (parsed.data.action === "portal") {
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.user.findUnique({
+      where: { id: userId },
+      select: { stripeCustomerId: true },
+    });
     if (!user?.stripeCustomerId) {
       return NextResponse.json({ error: "No billing account found" }, { status: 400 });
     }

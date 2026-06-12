@@ -34,7 +34,7 @@ type ApiResponse = {
 };
 
 const DRAFT_KEY = "virality-upload-draft";
-const MAX_VIDEO_MB = 500;
+const MAX_VIDEO_MB = 200;
 const ACCEPTED_TYPES = ["video/mp4", "video/webm"];
 const MAX_SYNC_RETRIES = 4;
 const SYNC_RETRY_DELAY_MS = 2000;
